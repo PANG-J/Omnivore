@@ -20,7 +20,7 @@ import { LocationProvider } from './LocationProvider';
 import { LanguageProvider } from './LanguageProvider'; // 경로에 맞게 수정
 import TokenTest from "./Pages/TokenTest";
 import Testre from "./Pages/Testre";
-
+import Result from "./Pages/Result";
 
 function App() {
   return (
@@ -48,6 +48,7 @@ function App() {
           <Route path="/test" element={<Test />} /> // '/test' 경로에 대한 라우트 추가
           <Route path="/token" element={<TokenTest />} /> // '/token-test' 경로에 대한 라우트 추가
           <Route path="/re" element={<Testre />} /> // '/token-test' 경로에 대한 라우트 추가
+          <Route path="/result" element={<Result />} />
         </Routes>
       </Router>
         </BookmarkProvider>

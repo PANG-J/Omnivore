@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import React, { useState, useRef, useEffect } from "react";
+import axios from 'axios';
+
 
 const ActionModal = styled.div`
   // 모달의 스타일 정의
@@ -130,10 +132,48 @@ function Main() {
     if (action === "camera") {
       openCamera();
     } else if (action === "gallery") {
-      openGallery();
+      // 'Upload' 버튼을 클릭하면 숨겨진 input 태그를 클릭하도록 합니다.
+     fileInputRef.current.click();
     }
   };
 
+    const handleFileSelect = async (event) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const file = files[0];
+      await uploadImage(file); // 선택된 이미지를 서버로 업로드
+    }
+  };
+  // 'Upload' 버튼 클릭 핸들러 (필요한 경우)
+    const handleUploadClick = () => {
+      fileInputRef.current && fileInputRef.current.click(); // 숨겨진 <input type="file"> 요소를 클릭
+  };
+
+   // 이미지 업로드 함수
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file); // 서버가 요구하는 필드명으로 파일 추가
+
+  try {
+    const response = await axios.post('YOUR_API_ENDPOINT', formData, {
+      headers: {
+        // 'Content-Type': 'multipart/form-data'는 기본적으로 설정됩니다.
+        // 인증이 필요한 경우, 여기에 인증 헤더를 추가하세요.
+        // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+       },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      console.log(result); // 결과 처리, 예: 결과 페이지로 이동
+      // navigate('/result', { state: { data: result } });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+
+  // 파일 입력 요소 참조를 사용하여 파일 선택 이벤트 처리
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -163,11 +203,20 @@ function Main() {
     }
   };
 
-  // 파일 선택 이벤트 핸들러
-  const handleFileSelect = (event) => {
-    const files = event.target.files;
-    // 선택된 파일을 다루는 로직 추가...
+  const handleCapture = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment'; // 모바일 디바이스의 카메라를 사용
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        await uploadImage(file); // 선택된 사진을 서버로 업로드
+      }
+    };
+    input.click();
   };
+
 
   const navigateToLogin = () => {
     navigate("/login");
@@ -232,11 +281,9 @@ Nearby restaurants</MainButton>
           <ButtonDescription>shot, upload</ButtonDescription>
       {showActionModal && (
         <ActionModal className="action-modal">
-          <button onClick={() => handleActionChoice("camera")}>Shot</button>
           <button onClick={() => handleActionChoice("gallery")}>Upload</button>
           <video ref={videoRef} autoPlay className="modal-video" style={{ display: "none" }}></video>
           <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-          <button onClick={takePhoto}>Take Photo</button>
         </ActionModal>
           )}
           <input
