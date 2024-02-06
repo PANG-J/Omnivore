@@ -117,7 +117,6 @@ function Main() {
     };
     // 문서에 이벤트 리스너 추가
     document.addEventListener("mousedown", handleClickOutside);
-
     // 로컬 스토리지에서 토큰 확인
     const token = localStorage.getItem("id_token");
     setIsLoggedIn(token); // 토큰이 있으면 로그인 상태로 설정
