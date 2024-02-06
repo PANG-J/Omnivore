@@ -68,6 +68,7 @@ const Information = () => {
   const toggleMenuDetails = (menuId) => {
     setMenuDetailsVisible((prev) => ({ ...prev, [menuId]: !prev[menuId] }));
   };
+  
 
   const operationList = storeDetails.operation.map((day, index) => {
     const [key, value] = Object.entries(day)[0];
