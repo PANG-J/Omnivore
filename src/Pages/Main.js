@@ -217,8 +217,6 @@ function Main() {
     input.click();
   };
 
-
-
   const navigateToBookmark = () => {
     navigate("/bookmark");
   };
