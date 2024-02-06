@@ -20,9 +20,6 @@ function Loginweb() {
 
         // 토큰을 로컬 스토리지에 저장
         localStorage.setItem('id_token', idToken);
-
-       
-
         navigate('/main');
       } else {
         // 해시 값이 없으면 대기하고 다시 확인
