@@ -62,7 +62,7 @@ const { storeId } = useParams();
 const [language, setLanguage] = useState(localStorage.getItem("selectedLanguage") || "en");
 
 
-  const fetchBookmarks = async () => {
+  const fetchinformation = async () => {
     const token = localStorage.getItem('id_token');
     if (language) {
         setLanguage(language); // 'setSelectedLanguage' 대신 'setLanguage' 사용
@@ -83,11 +83,11 @@ const [language, setLanguage] = useState(localStorage.getItem("selectedLanguage"
       setStoreDetails(response.data); // API 응답으로 받은 데이터를 상태에 저장
   
   } catch (error) {
-    console.error('북마크 조회 중 오류 발생:', error);
+    console.error('상세정보 조회 중 오류:', error);
   }
 };
   useEffect(() => {
-    fetchBookmarks();
+    fetchinformation();
   }, [storeId, language]);
   
    if (!storeDetails) {

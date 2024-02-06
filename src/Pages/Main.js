@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import React, { useState, useRef, useEffect } from "react";
 import axios from 'axios';
+import { useLocationContext } from "../LocationProvider"; // useLocationContext 임포트 확인
+
 
 
 const ActionModal = styled.div`
@@ -99,11 +101,11 @@ const ButtonDescription = styled.div`
 
 function Main() {
   const navigate = useNavigate();
+  const { location } = useLocationContext();
   const fileInputRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en'); // 기본 언어 설정
-
-
+  const token = localStorage.getItem('id_token');
+  const [language, setLanguage] = useState(localStorage.getItem("selectedLanguage") || "en");
 
   const [showActionModal, setShowActionModal] = useState(false);
    useEffect(() => {
@@ -113,12 +115,11 @@ function Main() {
         setShowActionModal(false);
       }
     };
-
     // 문서에 이벤트 리스너 추가
     document.addEventListener("mousedown", handleClickOutside);
 
     // 로컬 스토리지에서 토큰 확인
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("id_token");
     setIsLoggedIn(token); // 토큰이 있으면 로그인 상태로 설정
 
     // 클린업 함수: 모달이 닫힐 때 이벤트 리스너 제거 및 로그인 상태 체크 종료
@@ -144,10 +145,6 @@ function Main() {
       await uploadImage(file); // 선택된 이미지를 서버로 업로드
     }
   };
-  // 'Upload' 버튼 클릭 핸들러 (필요한 경우)
-    const handleUploadClick = () => {
-      fileInputRef.current && fileInputRef.current.click(); // 숨겨진 <input type="file"> 요소를 클릭
-  };
 
    // 이미지 업로드 함수
   const uploadImage = async (file) => {
@@ -155,19 +152,21 @@ function Main() {
     formData.append('image', file); // 서버가 요구하는 필드명으로 파일 추가
 
   try {
-    const response = await axios.post('YOUR_API_ENDPOINT', formData, {
+    const response = await axios.post('http://13.124.244.54:8142/extractor/', formData, {
       headers: {
-        // 'Content-Type': 'multipart/form-data'는 기본적으로 설정됩니다.
-        // 인증이 필요한 경우, 여기에 인증 헤더를 추가하세요.
-        // 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
-       },
-      });
+        // 'Content-Type': 'multipart/form-data'는 Axios가 자동으로 설정합니다.
+        'Authorization': token, // 실제 토큰으로 교체하세요.
+        'Language': language, // 예시로 'en'을 사용했습니다. 필요에 따라 변경하세요.
+        'La': location.latitude,
+        'Lo': location.longitude,
+      },
+    });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
       console.log(result); // 결과 처리, 예: 결과 페이지로 이동
-      // navigate('/result', { state: { data: result } });
+      navigate('/result', { state: { data: data } });
     } catch (error) {
       console.error('Error uploading image:', error);
     }
