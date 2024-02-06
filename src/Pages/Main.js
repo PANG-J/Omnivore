@@ -105,7 +105,7 @@ function Main() {
   const fileInputRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const token = localStorage.getItem('id_token');
-  const [language, setLanguage] = useState(localStorage.getItem("selectedLanguage") || "en");
+  const [language, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "en");
 
   const [showActionModal, setShowActionModal] = useState(false);
    useEffect(() => {
